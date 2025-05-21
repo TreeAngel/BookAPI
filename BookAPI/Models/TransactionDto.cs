@@ -38,6 +38,6 @@ namespace BookAPI.Models
 
         public DateOnly TransactionDate { get; set; }
 
-        public virtual ICollection<TransactionDetailDto> TransactionDetails { get; set; } = [];
+        public virtual List<TransactionDetailDto> TransactionDetails { get; set; } = [];
     }
 }

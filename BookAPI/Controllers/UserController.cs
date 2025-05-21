@@ -172,15 +172,9 @@ namespace BookAPI.Controllers
                         message = "Transaction not found"
                     });
                 }
+                var data = transaction.Adapt<TDetailDto>();
                 var details = await context.TransactionDetails.Where(x => x.TransactionId == transaction.Id).ToListAsync();
-                var data = new TDetailDto
-                {
-                    Id = transaction.Id,
-                    Code = transaction.Code,
-                    Subtotal = transaction.Subtotal,
-                    TransactionDate = transaction.TransactionDate,
-                    TransactionDetails = details.Adapt<List<TransactionDetailDto>>()
-                };
+                var detailsDto = details.Adapt<List<TransactionDetailDto>>();
                 {
                     return Ok(new
                     {
