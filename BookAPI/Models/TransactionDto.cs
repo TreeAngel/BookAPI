@@ -12,7 +12,7 @@ namespace BookAPI.Models
         [Key]
         public string Code { get; set; } = null!;
 
-        [Key]
+        [Key, JsonIgnore]
         public int UserId { get; set; }
 
         public long Subtotal { get; set; }
@@ -24,5 +24,20 @@ namespace BookAPI.Models
 
         [JsonIgnore]
         public virtual UserDto User { get; set; } = null!;
+    }
+
+    public class TDetailDto
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Key]
+        public string Code { get; set; } = null!;
+
+        public long Subtotal { get; set; }
+
+        public DateOnly TransactionDate { get; set; }
+
+        public virtual ICollection<TransactionDetailDto> TransactionDetails { get; set; } = [];
     }
 }

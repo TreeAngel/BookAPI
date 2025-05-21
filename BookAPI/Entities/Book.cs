@@ -11,6 +11,8 @@ public partial class Book
 
     public string Description { get; set; } = null!;
 
+    public long Price { get; set; }
+
     public string Publisher { get; set; } = null!;
 
     public DateOnly PublishDate { get; set; }
@@ -23,5 +25,5 @@ public partial class Book
 
     public virtual ICollection<TransactionDetail> TransactionDetails { get; set; } = new List<TransactionDetail>();
 
-    public virtual Wishlist? Wishlist { get; set; }
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
 }

@@ -23,5 +23,5 @@ public partial class User
 
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
-    public virtual Wishlist? Wishlist { get; set; }
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
 }

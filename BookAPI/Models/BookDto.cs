@@ -14,6 +14,8 @@ namespace BookAPI.Models
 
         public string Description { get; set; } = null!;
 
+        public long Price { get; set; }
+
         public string Publisher { get; set; } = null!;
 
         public DateOnly PublishDate { get; set; }
@@ -41,6 +43,9 @@ namespace BookAPI.Models
         public string Name { get; set; } = null!;
 
         public string Description { get; set; } = null!;
+
+        [Required, Range(1, long.MaxValue)]
+        public long Price { get; set; }
 
         [Required, MinLength(1)]
         public string Publisher { get; set; } = null!;

@@ -55,6 +55,9 @@ public partial class BookDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
+            entity.Property(e => e.Price)
+                .HasDefaultValue(1000L)
+                .HasColumnName("price");
             entity.Property(e => e.PublishDate).HasColumnName("publish_date");
             entity.Property(e => e.Publisher)
                 .HasMaxLength(255)
@@ -67,20 +70,16 @@ public partial class BookDbContext : DbContext
                 .HasNoKey()
                 .ToTable("BookGenre");
 
-            entity.HasIndex(e => e.BookId, "IX_BookGenre").IsUnique();
-
-            entity.HasIndex(e => e.GenreId, "IX_BookGenre_1").IsUnique();
-
             entity.Property(e => e.BookId).HasColumnName("book_id");
             entity.Property(e => e.GenreId).HasColumnName("genre_id");
 
-            entity.HasOne(d => d.Book).WithOne()
-                .HasForeignKey<BookGenre>(d => d.BookId)
+            entity.HasOne(d => d.Book).WithMany()
+                .HasForeignKey(d => d.BookId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BookGenre_Book");
 
-            entity.HasOne(d => d.Genre).WithOne()
-                .HasForeignKey<BookGenre>(d => d.GenreId)
+            entity.HasOne(d => d.Genre).WithMany()
+                .HasForeignKey(d => d.GenreId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BookGenre_Genre");
         });
@@ -172,24 +171,23 @@ public partial class BookDbContext : DbContext
         {
             entity.ToTable("Wishlist");
 
-            entity.HasIndex(e => e.BookId, "IX_Wishlist").IsUnique();
-
-            entity.HasIndex(e => e.UserId, "IX_Wishlist_1").IsUnique();
-
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BookId).HasColumnName("book_id");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
+            entity.Property(e => e.DeletedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("deleted_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Book).WithOne(p => p.Wishlist)
-                .HasForeignKey<Wishlist>(d => d.BookId)
+            entity.HasOne(d => d.Book).WithMany(p => p.Wishlists)
+                .HasForeignKey(d => d.BookId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Wishlist_Book");
 
-            entity.HasOne(d => d.User).WithOne(p => p.Wishlist)
-                .HasForeignKey<Wishlist>(d => d.UserId)
+            entity.HasOne(d => d.User).WithMany(p => p.Wishlists)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Wishlist_User");
         });

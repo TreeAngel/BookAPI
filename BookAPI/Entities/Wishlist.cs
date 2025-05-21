@@ -13,6 +13,8 @@ public partial class Wishlist
 
     public DateTime CreatedAt { get; set; }
 
+    public DateTime? DeletedAt { get; set; }
+
     public virtual Book Book { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;

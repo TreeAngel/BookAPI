@@ -18,9 +18,19 @@ namespace BookAPI.Models
         public DateTime CreatedAt { get; set; }
 
         [JsonIgnore]
+        public DateTime? DeletedAt { get; set; }
+
+        [JsonIgnore]
         public virtual BookDto Book { get; set; } = null!;
 
         [JsonIgnore]
         public virtual UserDto User { get; set; } = null!;
+    }
+
+    public class GetWishlistDto
+    {
+        public DateTime CreatedAt { get; set; }
+
+        public virtual BookDto Book { get; set; } = null!;
     }
 }

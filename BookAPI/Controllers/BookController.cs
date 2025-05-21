@@ -19,58 +19,86 @@ namespace BookAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBooks(string? genre)
+        public async Task<IActionResult> GetBooks(string? genreName)
         {
             try
             {
-                List<BookDto> data = [];
-                var bookGenre = !string.IsNullOrEmpty(genre) ? await context.BookGenres.Where(x => x.Genre.Name.ToLower() == genre.Trim().ToLower()).Select(x => new {x.Book, x.Genre}).ToListAsync() : await context.BookGenres.Where(x => x.Book.DeletedAt == null).Select(x => new { x.Book, x.Genre }).ToListAsync();
-                foreach (var item in bookGenre)
+                if (string.IsNullOrEmpty(genreName))
                 {
-                    var book = await context.Books.FirstOrDefaultAsync(x => x.Id == item.Book.Id && x.DeletedAt == null);
-                    if (book != null)
+                    var bookGenres = await context.BookGenres
+                        .Include(x => x.Book)
+                         .Where(x => x.Book.DeletedAt == null)
+                         .Select(x => new { x.Book, x.GenreId })
+                       .ToListAsync();
+                    List<BookDto> data = new List<BookDto>();
+                    foreach (var item in bookGenres)
                     {
-                        var dto = book.Adapt<BookDto>();
-                        var existAtData = data.FirstOrDefault(x => x.Id == book.Id);
-                        var genres = await context.BookGenres.Where(x => x.BookId == book.Id).ToListAsync();
-                        if (existAtData != null)
+                        var book = item.Book.Adapt<BookDto>();
+                        var exist = data.FirstOrDefault(x => x.Id == book.Id);
+                        var genre = await context.Genres.FirstOrDefaultAsync(x => x.Id == item.GenreId);
+                        if (exist != null)
                         {
-                            if (!existAtData.Genres.Any(x => x == item.Genre.Name))
+                            if (genre != null && !exist.Genres.Contains(genre.Name))
                             {
-                                existAtData.Genres.Add(item.Genre.Name);
+                                exist.Genres.Add(genre.Name);
                             }
                         }
                         else
                         {
-                            book.Genres.Add(item.Genre.Name);
+                            if (genre != null && !book.Genres.Contains(genre.Name))
+                            {
+                                book.Genres.Add(genre.Name);
+                            }
                             data.Add(book);
                         }
                     }
+                    return Ok(new
+                    {
+                        data
+                    });
                 }
-                //var books = string.IsNullOrEmpty(genre)
-                //    ? await context.BookGenres.Where(x => x.Book.DeletedAt == null).Select(x => new { book = x.Book, genre = x.Genre }).ToListAsync()
-                //    : await context.BookGenres.Where(x => x.Genre.Name.ToLower() == genre.Trim().ToLower() && x.Book.DeletedAt == null).Select(x => new { book = x.Book, genre = x.Genre }).ToListAsync();
-                //foreach (var item in books)
-                //{
-                //    var book = item.book.Adapt<BookDto>();
-                //    var existAtData = data.FirstOrDefault(x => x.Id == item.book.Id);
-                //    if (existAtData != null)
-                //    {
-                //        if (!existAtData.Genres.Any(x => x == item.genre.Name))
-                //        {
-                //            existAtData.Genres.Add(item.genre.Name);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        book.Genres.Add(item.genre.Name);
-                //        data.Add(book);
-                //    }
-                //}
-                return Ok(new
+                else
                 {
-                    data
-                });
+                    var genre = await context.Genres.FirstOrDefaultAsync(x => x.Name.Trim().ToLower() == genreName.Trim().ToLower());
+                    if (genre is null)
+                    {
+                        return NotFound(new
+                        {
+                            status = "Failed",
+                            message = "Genre not found"
+                        });
+                    }
+                    var bookGenres = await context.BookGenres
+                        .Include(x => x.Book)
+                         .Where(x => x.Book.DeletedAt == null && x.GenreId == genre.Id)
+                         .Select(x => new { x.Book, x.GenreId })
+                       .ToListAsync();
+                    List<BookDto> data = new List<BookDto>();
+                    foreach (var item in bookGenres)
+                    {
+                        var book = item.Book.Adapt<BookDto>();
+                        var exist = data.FirstOrDefault(x => x.Id == book.Id);
+                        if (exist != null)
+                        {
+                            if (genre != null && !exist.Genres.Contains(genre.Name))
+                            {
+                                exist.Genres.Add(genre.Name);
+                            }
+                        }
+                        else
+                        {
+                            if (genre != null && !book.Genres.Contains(genre.Name))
+                            {
+                                book.Genres.Add(genre.Name);
+                            }
+                            data.Add(book);
+                        }
+                    }
+                    return Ok(new
+                    {
+                        data
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -83,18 +111,24 @@ namespace BookAPI.Controllers
         {
             try
             {
-                var book = await context.Books.FirstOrDefaultAsync(x => x.Id == bookId && x.DeletedAt == null);
-                if (book is null)
+                var data = new BookDto();
+                var bookGenres = await context.BookGenres
+                        .Include(x => x.Book)
+                         .Where(x => x.Book.DeletedAt == null && x.BookId == bookId)
+                         .Select(x => new { x.Book, x.GenreId })
+                       .ToListAsync();
+                data = bookGenres.First().Book.Adapt<BookDto>();
+                foreach (var item in bookGenres)
                 {
-                    return NotFound(new
+                    var genre = await context.Genres.FirstOrDefaultAsync(x => x.Id == item.GenreId);
+                    if (genre != null && !data.Genres.Contains(genre.Name))
                     {
-                        status = "Failed",
-                        message = "Book not found"
-                    });
+                        data.Genres.Add(genre.Name);
+                    }
                 }
                 return Ok(new
                 {
-                    data = book.Adapt<BookDto>()
+                    data
                 });
             }
             catch (Exception ex)
