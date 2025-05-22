@@ -18,6 +18,23 @@ namespace BookAPI.Controllers
             this.context = context;
         }
 
+        [HttpGet("genres")]
+        public async Task<IActionResult> GetGenres()
+        {
+            try
+            {
+                var data = await context.Genres.ToListAsync();
+                return Ok(new
+                {
+                    data = data.Adapt<List<GenreDto>>()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.ToString());
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetBooks(string? genreName)
         {

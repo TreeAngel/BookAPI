@@ -5,7 +5,7 @@ namespace BookAPI.Models
 {
     public class GenreDto
     {
-        [Key, JsonIgnore]
+        [Key]
         public int Id { get; set; }
 
         [Key]
