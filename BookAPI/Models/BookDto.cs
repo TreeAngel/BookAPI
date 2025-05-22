@@ -29,12 +29,6 @@ namespace BookAPI.Models
 
         [JsonIgnore]
         public DateTime? DeletedAt { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<TransactionDetailDto> TransactionDetails { get; set; } = [];
-
-        [JsonIgnore]
-        public virtual WishlistDto? Wishlist { get; set; }
     }
 
     public class CreateBookDto

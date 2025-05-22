@@ -36,7 +36,7 @@ builder.Services.AddSwaggerGen(o =>
     {
         Title = "Book API",
         Version = "v1",
-        Description = "API for managing books and users"
+        Description = "API"
     });
     o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -77,7 +77,7 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 

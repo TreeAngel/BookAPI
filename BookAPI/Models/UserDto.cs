@@ -21,21 +21,9 @@ namespace BookAPI.Models
         public string Role { get; set; } = null!;
 
         public string ImageProfile { get; set; } = null!;
-
-        [JsonIgnore]
-        public DateTime CreatedAt { get; set; }
-
-        [JsonIgnore]
-        public DateTime? DeletedAt { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<TransactionDto> Transactions { get; set; } = [];
-
-        [JsonIgnore]
-        public virtual WishlistDto? Wishlist { get; set; }
     }
 
-    public class LoginRequest
+    public class LoginRequestDto
     {
         [Required, Key]
         public string Username { get; set; } = null!;
@@ -44,7 +32,7 @@ namespace BookAPI.Models
         public string Password { get; set; } = null!;
     }
 
-    public class RegisterRequest
+    public class RegisterRequestDto
     {
         [Required]
         public string FullName { get; set; } = null!;
@@ -54,5 +42,19 @@ namespace BookAPI.Models
 
         [Required, MinLength(4)]
         public string Password { get; set; } = null!;
+    }
+
+    public class UpdateProfileDto
+    {
+        [Required]
+        public string FullName { get; set; } = null!;
+
+        [Required]
+        public string Username { get; set; } = null!;
+    }
+
+    public class UploadImageProfile
+    {
+        public IFormFile? Image;
     }
 }

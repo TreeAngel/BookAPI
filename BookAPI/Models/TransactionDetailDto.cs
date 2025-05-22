@@ -9,20 +9,26 @@ namespace BookAPI.Models
         [Key]
         public int Id { get; set; }
 
-        [Key, JsonIgnore]
+        [JsonIgnore]
         public int TransactionId { get; set; }
 
-        [Key, JsonIgnore]
+        [Key]
         public int BookId { get; set; }
+
+        public int Qty { get; set; }
+
+        public long TotalPrice { get; set; }
+    }
+
+    public class TDetailsDto
+    {
+        public int Id { get; set; }
 
         public int Qty { get; set; }
 
         public long TotalPrice { get; set; }
 
         public virtual BookDto Book { get; set; } = null!;
-
-        [JsonIgnore]
-        public virtual TransactionDto Transaction { get; set; } = null!;
     }
 
     public class CreateTransactionDto

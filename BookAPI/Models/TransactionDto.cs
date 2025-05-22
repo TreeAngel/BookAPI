@@ -21,9 +21,6 @@ namespace BookAPI.Models
 
         [JsonIgnore]
         public virtual ICollection<TransactionDetailDto> TransactionDetails { get; set; } = [];
-
-        [JsonIgnore]
-        public virtual UserDto User { get; set; } = null!;
     }
 
     public class TDetailDto
@@ -38,6 +35,6 @@ namespace BookAPI.Models
 
         public DateOnly TransactionDate { get; set; }
 
-        public virtual List<TransactionDetailDto> TransactionDetails { get; set; } = [];
+        public virtual ICollection<TDetailsDto> Details { get; set; } = [];
     }
 }
